@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fitbit Authorization</title>
+  </head>
+  <body>
+    <h1>Fitbit Authorization</h1>
+    <p>Click the button below to authorize this application to access your Fitbit data.</p>
+    <button onclick="authorize()">Authorize</button>
+
+    <script>
+      function authorize() {
+        // Redirect to the Fitbit authorization page
+        window.location.href = "http://127.0.0.1:3000/authorize";
+      }
+    </script>
+  </body>
+</html>
