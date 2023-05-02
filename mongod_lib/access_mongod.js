@@ -1,33 +1,40 @@
 const {MongoClient} = require('mongodb');
 const dbURL = 'mongodb://3.35.41.124:27017/';
-const SeoulTimeOffset = 9;
+const getLocalDate = require('../date_lib/get_local_date');
 
-function getLocalDate(timeOffset){//if UTC+9 then 9
-    var utcVal = Date.now();
-    return new Date(utcVal + 3600 * 1000 * timeOffset);//3600 * 1000 = 1hour
-}
-
-function getLocalDateZero(timeOffset){
-    var utcVal = Date.now();
-    var localVal = utcVal + 3600 * 1000 * timeOffset;
-    var localZeroVal = localVal - localVal % 86400000;// 86400000 = 1000 * 3600 * 24 = 1 day
-    return new Date(localZeroVal);
-}
 
 module.exports={
-    updateUserLastDate:async (user_id)=>{
+    selectLastDate: async (userId)=>{
         const dbClient = new MongoClient(dbURL);
         try{
             const iotDb = dbClient.db('cloud_iot');
             const userLastDateCollection = iotDb.collection('user_lastDate');
 
-            var korDateZero = getLocalDateZero(SeoulTimeOffset);
+            const query = {
+                user : userId
+            }
+            var userLastDateDocument =  await userLastDateCollection.findOne(query);
+            return userLastDateDocument;
+        }catch{
 
-            const filter = {user: user_id};
+        }finally{
+            await dbClient.close();
+        }
+    },
+    updateLastDate: async (userId)=>{//update to now
+        const dbClient = new MongoClient(dbURL);
+        try{
+            const iotDb = dbClient.db('cloud_iot');
+            const userLastDateCollection = iotDb.collection('user_lastDate');
+
+            var korDate = getLocalDate.now();
+            korDate.setUTCHours(0,0,0,0);
+
+            const filter = {user: userId};
             const options = {upsert:true};
             const updateQuery = {
                 $set: {
-                    lastDate : korDateZero
+                    lastDate : korDate
                 }
             };
 
@@ -38,7 +45,46 @@ module.exports={
         }catch{
 
         }finally{
-            dbClient.close();
+            await dbClient.close();
+        }
+    },
+    insertSleepData: async (userId, oneDaySleepDataByList)=>{//insert one day sleep data all
+        const dbClient = new MongoClient(dbURL);
+        try{
+            const iotDb = dbClient.db('cloud_iot');
+            const userSleepDateCollection = iotDb.collection('user_sleep_date');
+            for(const oneSleep of oneDaySleepDataByList.sleep){
+                var dateObj = getLocalDate.byFormat1(oneSleep.dateOfSleep);
+                const document = {
+                    user : userId,
+                    sleep : oneSleep,
+                    date : dateObj
+                }
+                const result = await userSleepDateCollection.insertOne(document);
+                console.log(`A document was inserted with the _id: ${result.insertedId}`,);
+            }
+        }catch{
+
+        }finally{
+            await dbClient.close();
+        }
+    },
+    selectSleepDataByList: async (userId, dateFormatString)=>{ //date format : '2023-05-02'
+        const dbClient = new MongoClient(dbURL);
+        try{
+            const iotDb = dbClient.db('cloud_iot');
+            const userSleepDateCollection = iotDb.collection('user_sleep_date');
+            var start = getLocalDate.byFormat1(dateFormatString);
+            const query = {
+                user : userId,
+                date : start
+            }
+            sleepDataList = await userSleepDateCollection.find(query).toArray();
+            return sleepDataList;
+        }catch{
+
+        }finally{
+            await dbClient.close();
         }
     }
 }

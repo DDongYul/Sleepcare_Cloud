@@ -10,23 +10,11 @@ function getLocalDateZero(timeOffset){
     return new Date(localZeroVal);
 }
 
-var old_date = getLocalDateObject(9);
-var new_date = new Date(old_date.getFullYear(), old_date.getMonth(), old_date.getDay() + 1, 0, 0, 0, 0);
-console.log(new_date);
+function newDate(){
+    var date = new Date('2023-04-09');
+    console.log(date);
+}
 
-var utcVal = Date.now();
-console.log(utcVal);
-var utcVal = utcVal + 3600 * 1000 * 9;
-var utcVal = utcVal - utcVal % 86400000;
-console.log(utcVal);
-var date = new Date(utcVal);
-console.log(date);
+newDate();
 
-// var locale_string = new Date().toLocaleString('en-US');
-// console.log(locale_string);
-// var date_list = locale_string.split(',')[0].split('/');//month day year
-// var time_list = locale_string.split(' ')[1].split(':');//hour minute sec
-// console.log(date_list);
-// console.log(time_list);
-// var locale_date = new Date(Date.UTC(date_list[2], date_list[0], date_list[1], time_list[0], time_list[1], time_list[2]));
-// console.log(locale_date);
+// 23 05 02 13:00:00를 저장하면 -9을 하여 23 05 02 04:00:00을 UTC로 계산하고 이 UTC time이 date object의 출력이된다.
