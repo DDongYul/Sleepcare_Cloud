@@ -1,6 +1,10 @@
 const access_mongod = require('../access_mongod.js');
 const test_obj = require('./test_obj.js');
 
+async function select(){
+    access_mongod.selectLastDate('FF');
+}
+
 async function insert_select(){
     await access_mongod.updateLastDate('FF');
     await access_mongod.selectLastDate('FF').then((userLastDateDocument)=>{console.log(userLastDateDocument);})
@@ -20,6 +24,7 @@ function selectSleepData(){
     })
 }
 
-// insert_select();
+// select();
+insert_select();
 // insertUSD();
-selectSleepData();
+// selectSleepData();

@@ -1,13 +1,13 @@
 const {MongoClient} = require('mongodb');
-const dbURL = 'mongodb://3.35.41.124:27017/';
+const dbURL = 'mongodb://cloudjs:cloudjs@3.35.41.124:27017';
 const getLocalDate = require('../date_lib/get_local_date');
 
 
 module.exports={
     selectLastDate: async (userId)=>{
-        const dbClient = new MongoClient(dbURL);
+        const dbClient = await MongoClient.connect(dbURL);
         try{
-            const iotDb = dbClient.db('cloud_iot');
+            const iotDb =  dbClient.db('cloud_iot');
             const userLastDateCollection = iotDb.collection('user_lastDate');
 
             const query = {
@@ -22,7 +22,7 @@ module.exports={
         }
     },
     updateLastDate: async (userId)=>{//update to now
-        const dbClient = new MongoClient(dbURL);
+        const dbClient = await MongoClient.connect(dbURL);
         try{
             const iotDb = dbClient.db('cloud_iot');
             const userLastDateCollection = iotDb.collection('user_lastDate');
@@ -48,6 +48,7 @@ module.exports={
             await dbClient.close();
         }
     },
+    //===================
     insertSleepData: async (userId, oneDaySleepDataByList)=>{//insert one day sleep data all
         const dbClient = new MongoClient(dbURL);
         try{
