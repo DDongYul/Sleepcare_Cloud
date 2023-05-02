@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fitbit MainPage</title>
+  </head>
+  <body>
+    <h1>Fitbit UserPage</h1>
+    <p>나의 수면 현황 </p>
+    <button onclick="data()">나의 수면 현황</button>
+
+    <p>나의 최적 수면환경 찾기</p>
+    <button onclick="sleep()">나의 최적 수면환경</button>
+
+    <script>
+      function data() {
+        // Redirect to the Fitbit authorization page
+        window.location.href = "http://127.0.0.1:3000/user/id/data";
+      }
+
+      function sleep() {
+        // Redirect to the Fitbit authorization page
+        window.location.href = "http://127.0.0.1:3000/user/id/sleep";
+      }
+    </script>
+  </body>
+</html>
