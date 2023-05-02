@@ -1,23 +1,34 @@
 const express = require('express')
 const app = express()
+const ejs = require('ejs')
 const path = require('path')
 
 var FitbitApiClient = require("fitbit-node");
 
-var apiClient = new FitbitApiClient({
-    clientId: "23QZ6N", clientSecret: "979668d8630396d867bbaae539b658c3", apiVersion: "1.2"
-})  //API클라이언트 생성
+// var apiClient = new FitbitApiClient({
+//     clientId: "23QZ6N", clientSecret: "979668d8630396d867bbaae539b658c3", apiVersion: "1.2"
+// })  //EC2 전용 API클라이언트 생성 redirectUrl:https://3.35.41.124:3000/callback 
 
+var apiClient = new FitbitApiClient({
+    clientId: "23QZHL", clientSecret: "d54e56a48c6cad62a74e3a70e76c8c8a", apiVersion: "1.2"
+})  //local 환경 API클라이언트 생성 redirectUrl: "http://127.0.0.1:3000/callback"
+
+var url = "http://127.0.0.1:3000"   //base url for RestAPI
 var scope = "profile activity sleep nutrition weight"
-var redirectUrl = "https://3.35.41.124:3000/callback"
+var redirectUrl = "http://127.0.0.1:3000/callback"
 
 var authorizerUrl = apiClient.getAuthorizeUrl(scope, redirectUrl)
 console.log(authorizerUrl)
 
 app.get('/', function (req, res) {
     console.log('connect /')
-    const filePath = path.join(__dirname, 'views', 'index.html')
-    res.sendFile(filePath);
+    ejs.renderFile('views/index.ejs',{url:url}, function(err,html){
+        if (err) {
+            res.status(err.status).send(err);
+        } else {
+            res.send(html)
+        }
+    });
 })
 
 app.get('/authorize', function (req, res) {
@@ -34,7 +45,7 @@ app.get('/callback', function (req, res) {
         console.log(result)
         apiClient.get("/sleep/list.json?afterDate=2020-05-01&sort=asc&offset=0&limit=1", result.access_token).then(results => {
             //sendData() -> DB로 데이터 보내기
-            res.redirect('https://3.35.41.124:3000/user/' + result.user_id);
+            res.redirect(url + "/user/" + result.user_id);
         }).catch(err => {
             res.status(err.status).send(err);
         });
@@ -47,21 +58,52 @@ app.get('/user/:id', function(req, res){
     //두가지 버튼 1.유저 DATA 조회 2.최적환경 대시보드
     const id = req.params.id
     console.log('connect /user/'+id)
-    const filePath = path.join(__dirname, 'views', 'user.html')
-    res.sendFile(filePath);
+    const data= {
+        url: url,
+        id: id
+    };
+    ejs.renderFile('views/user.ejs',data, function(err,html){
+    if (err) {
+        console.log(err)
+    } else {
+        res.send(html)
+    }
+});
     //getData() 데이터 베이스에서 필요한 데이터 가져오기
 })
 
 app.get('/user/:id/data', function(req, res){
     const id = req.params.id
-    console.log('connect /user/',id,'/data')
-    res.send("user data")
+    console.log('connect /user/'+id+'/data')
+    data = {
+        user: '동열',
+        date: '2023-05-02',
+        sleepScore: 70,
+        env: {temparature:20, humidity:50, illuminance:10}
+    }
+    ejs.renderFile('views/data.ejs',data, function(err,html){
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(html)
+        }
+    });
 })
 
 app.get('/user/:id/sleep', function(req, res){
     const id = req.params.id
-    console.log('connect /user/',id,'/sleep')
-    res.send("user best sleep")
+    console.log('connect /user/'+id+'/data')
+    data = {
+        user: '동열',
+        bestEnv: {temparature:21, humidity:60, illuminance:5}
+    }
+    ejs.renderFile('views/sleep.ejs',data, function(err,html){
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(html)
+        }
+    });
 })
 
 app.listen(3000, function () {
