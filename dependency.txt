@@ -1,0 +1,6 @@
+//at Sleepcare_Cloud folder
+npm init
+
+npm install express
+npm install fitbit-node
+npm install mongoose
