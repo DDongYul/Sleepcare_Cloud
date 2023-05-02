@@ -5,11 +5,11 @@ const path = require('path')
 var FitbitApiClient = require("fitbit-node");
 
 var apiClient = new FitbitApiClient({
-    clientId: "23QZHL", clientSecret: "d54e56a48c6cad62a74e3a70e76c8c8a", apiVersion: "1.2"
+    clientId: "23QZ6N", clientSecret: "979668d8630396d867bbaae539b658c3", apiVersion: "1.2"
 })  //API클라이언트 생성
 
 var scope = "profile activity sleep nutrition weight"
-var redirectUrl = "http://127.0.0.1:3000/callback"
+var redirectUrl = "https://3.35.41.124:3000/callback"
 
 var authorizerUrl = apiClient.getAuthorizeUrl(scope, redirectUrl)
 console.log(authorizerUrl)
@@ -34,7 +34,7 @@ app.get('/callback', function (req, res) {
         console.log(result)
         apiClient.get("/sleep/list.json?afterDate=2020-05-01&sort=asc&offset=0&limit=1", result.access_token).then(results => {
             //sendData() -> DB로 데이터 보내기
-            res.redirect('http://127.0.0.1:3000/user/' + result.user_id);
+            res.redirect('https://3.35.41.124:3000/user/' + result.user_id);
         }).catch(err => {
             res.status(err.status).send(err);
         });
