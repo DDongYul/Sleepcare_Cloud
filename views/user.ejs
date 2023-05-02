@@ -14,12 +14,12 @@
     <script>
       function data() {
         // Redirect to the Fitbit authorization page
-        window.location.href = "https://3.35.41.124:3000/user/id/data";
+        window.location.href = '<%= url %>' + "/user/" +'<%= id %>' + "/data";
       }
 
       function sleep() {
         // Redirect to the Fitbit authorization page
-        window.location.href = "https://3.35.41.124:3000/user/id/sleep";
+        window.location.href = '<%= url %>' + "/user/" +'<%= id %>' + "/sleep";
       }
     </script>
   </body>
