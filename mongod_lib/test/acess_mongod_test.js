@@ -11,7 +11,8 @@ async function insertUSD(){
 }
 
 function selectSleepData(){
-    access_mongod.selectSleepDataByList('AA', '2023-04-29').then((list)=>{
+    access_mongod.selectSleepDataByList('B', '2023-04-29').then((list)=>{
+        console.log(list);
         for(element of list){
             console.log(element);
             console.log(element.sleep.levels.data[0]);
