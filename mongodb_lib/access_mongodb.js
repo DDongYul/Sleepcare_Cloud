@@ -18,23 +18,28 @@ async function internalSelectUserObjId (userId){
 }
 
 const exportingModule = {
-    selectUserObjId : async (userId) => {
-        await conn.connect('getObjId');
-        try{
-            var user = await User.findOne({userId : userId});
-            if(user == null){
-                console.log('no such user');
-                return null;
-            }else{
-                return user._id;
-            }
-        }catch(err){
-            console.log('err at getObjId');
-            console.log(err);
-        }finally{
-            await conn.disconnect('getObjId');
-        }
-    },
+    // selectUserObjId : async (userId) => {
+    //     await conn.connect('getObjId');
+    //     try{
+    //         var user = await User.findOne({userId : userId});
+    //         if(user == null){
+    //             console.log('no such user');
+    //             return null;
+    //         }else{
+    //             return user._id;
+    //         }
+    //     }catch(err){
+    //         console.log('err at getObjId');
+    //         console.log(err);
+    //     }finally{
+    //         await conn.disconnect('getObjId');
+    //     }
+    // },
+    /**
+     * 
+     * @param {*} userId 
+     * @returns fail : null / success : user pullDate Obj
+     */
     selectUserPullDate : async (userId) => {
         await conn.connect('selectPullDate');
         try{
@@ -52,6 +57,12 @@ const exportingModule = {
             await conn.disconnect('selectPullDate');
         }
     },
+    /**
+     * if user document with userId not exists -> insert User document with userId, now date obj
+     * if user document with userId exists -> update user document with now date obj
+     * @param {*} userId 
+     * @returns fail : false / success : true
+     */
     upsertUserPullDateNow : async (userId) => {
         await conn.connect('updateLastDateNow');
         try{
@@ -70,6 +81,12 @@ const exportingModule = {
             await conn.disconnect('updateLastDateNow');
         }
     },
+    /**
+     * 
+     * @param {*} userId 
+     * @param {*} sleepDataList 
+     * @returns no such user or fail : false / success : true
+     */
     insertUserSleepDatas : async (userId, sleepDataList) => {
         await conn.connect('insertSleepData');
         try{
