@@ -6,14 +6,13 @@ const Sleep = new Schema({
         type : Schema.Types.ObjectId,
         ref : 'User',
         required : true
-    }
-    ,
-    sleepData : {
-        type : Object,
-        required : true
     },
     date : {
         type : Date,
+        required : true
+    },
+    sleepData : {
+        type : Object,
         required : true
     }
 })

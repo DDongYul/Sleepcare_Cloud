@@ -9,7 +9,7 @@ module.exports={
     /**
      * 
      * @param {*} dateFormatString 2023-04-09
-     * @returns dateObj with 2023-04-09:00:00:00
+     * @returns dateObj with value 2023-04-09T00:00:00.000Z
      */
     byFormat1: (dateFormatString) => {
         var date = new Date(dateFormatString);
@@ -18,7 +18,7 @@ module.exports={
     /**
      * 
      * @param {*} dateFormatString 2023-04-29T11:01:30.000
-     * @returns dateObj with value 2023-04-29 11:01:30.000
+     * @returns dateObj with value 2023-04-29T11:01:30.000Z
      */
     byFormat2: (dateFormatString) => {
         var date = new Date(dateFormatString);

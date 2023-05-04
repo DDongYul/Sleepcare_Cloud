@@ -55,6 +55,7 @@ function dateFormat(date) {
 app.get('/callback', function (req, res) {
     console.log('connect /callback')
     // exchange the authorization code we just received for an access token
+    console.log(req);
     apiClient.getAccessToken(req.query.code, redirectUrl).then(result => {
         var beforeDate = dateFormat(LocalDate.now())
         console.log("beforeDate:",beforeDate)
@@ -173,5 +174,3 @@ app.get('/user/:id/sleep', function(req, res){
 app.listen(3000, function () {
     console.log('3000 port listen !!')
 })
-
-
