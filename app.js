@@ -42,6 +42,7 @@ app.get('/authorize', function (req, res) {
 app.get('/callback', function (req, res) {
     console.log('connect /callback')
     // exchange the authorization code we just received for an access token
+    console.log(req);
     apiClient.getAccessToken(req.query.code, redirectUrl).then(result => {
         // callback에서는 DB 업데이트 과정을 처리
         //selectUserPullDate로 최종 업데이트 날짜 가져오고 현재시간에서 빼고 뺀 시간만큼 apiClientget sleep 데이터를 가져오고 디비에 insert (result.sleep for문)
@@ -138,5 +139,3 @@ app.get('/user/:id/sleep', function(req, res){
 app.listen(3000, function () {
     console.log('3000 port listen !!')
 })
-
-
