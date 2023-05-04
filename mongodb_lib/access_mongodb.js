@@ -35,15 +35,17 @@ const exportingModule = {
     //         await conn.disconnect('getObjId');
     //     }
     // },
+    //deprecated external selectUserObjId
+
     /**
      * 
      * @param {*} userId 
-     * @returns fail : null / success : user pullDate Obj
+     * @returns no such user or fail : null / success : user pullDate Obj
      */
     selectUserPullDate : async (userId) => {
         await conn.connect('selectPullDate');
         try{
-            var user = await User.findOne({ user : userId});
+            var user = await User.findOne({ userId : userId});
             if(user == null){
                 console.log('no such user');
                 return null;
@@ -87,7 +89,7 @@ const exportingModule = {
      * @param {*} sleepDataList 
      * @returns no such user or fail : false / success : true
      */
-    insertUserSleepDatas : async (userId, sleepDataList) => {
+    insertUserSleepDataList : async (userId, sleepDataList) => {
         await conn.connect('insertSleepData');
         try{
             var userObjId = await internalSelectUserObjId(userId);
@@ -96,9 +98,9 @@ const exportingModule = {
                 return false;
             }
             var sleepDataSchemaList = [];
-            for(const sleepData of sleepDataList.sleep){
+            for(const sleepData of sleepDataList){
                 var date = LocalDate.byFormat2(sleepData.endTime);
-                sleepDataSchemaList.push({userObjId : userObjId, sleepData : sleepData ,date : date});
+                sleepDataSchemaList.push({userObjId : userObjId, date : date, sleepData : sleepData});
             }
             const docs = await Sleep.insertMany(sleepDataSchemaList);
             if(docs == null){

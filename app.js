@@ -40,6 +40,7 @@ app.get('/authorize', function (req, res) {
 app.get('/callback', function (req, res) {
     console.log('connect /callback')
     // exchange the authorization code we just received for an access token
+    console.log(req);
     apiClient.getAccessToken(req.query.code, redirectUrl).then(result => {
         // use the access token to fetch the user's profile information
         console.log(result)
@@ -109,5 +110,3 @@ app.get('/user/:id/sleep', function(req, res){
 app.listen(3000, function () {
     console.log('3000 port listen !!')
 })
-
-
