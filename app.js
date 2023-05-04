@@ -1,11 +1,13 @@
 const express = require('express')
 const app = express()
 const ejs = require('ejs')
+const LocalDate = require('./date_lib/get_local_date.js');
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 
 var FitbitApiClient = require("fitbit-node");
+var db = require('./mongodb_lib/access_mongodb');
 
 // var apiClient = new FitbitApiClient({
 //     clientId: "23QZ6N", clientSecret: "979668d8630396d867bbaae539b658c3", apiVersion: "1.2"
@@ -38,24 +40,57 @@ app.get('/authorize', function (req, res) {
     res.redirect(apiClient.getAuthorizeUrl(scope, redirectUrl));
 })
 
+function dateFormat(date) {
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hour = date.getHours();
+
+    month = month >= 10 ? month : '0' + month;
+    day = day >= 10 ? day : '0' + day;
+    hour = hour >= 10 ? hour : '0' + hour;
+
+    return date.getFullYear() + '-' + month + '-' + day;
+}
 
 app.get('/callback', function (req, res) {
     console.log('connect /callback')
     // exchange the authorization code we just received for an access token
     console.log(req);
     apiClient.getAccessToken(req.query.code, redirectUrl).then(result => {
-        // callback에서는 DB 업데이트 과정을 처리
-        //selectUserPullDate로 최종 업데이트 날짜 가져오고 현재시간에서 빼고 뺀 시간만큼 apiClientget sleep 데이터를 가져오고 디비에 insert (result.sleep for문)
-        //upsertDate로 날짜 업데이트 해줌 (DB업데이트 끝)
-        apiClient.get("/sleep/list.json?afterDate=2020-05-01&sort=asc&offset=0&limit=1", result.access_token).then(results => {
-            // res.send(results[0].sleep)
-            res.redirect(url + "/user/" + result.user_id);
+        var beforeDate = dateFormat(LocalDate.now())
+        console.log("beforeDate:",beforeDate)
+        db.selectUserPullDate(result.user_id).then(lastModified =>{
+            console.log("lastModified:",lastModified)
+            if (lastModified == null){
+                var sleepQuery = "/sleep/list.json?beforeDate=" + beforeDate + "&sort=asc&offset=0&limit=10"
+            }
+            else{
+                var sleepQuery = "/sleep/list.json?afterDate=" + dateFormat(lastModified) + "beforeDate=" + beforeDate + "&sort=asc&offset=0&limit=10"
+            }
+            console.log("sleepQuery:",sleepQuery)
+
+            apiClient.get(sleepQuery, result.access_token).then(sleepData => {
+                // DB에 데이터 저장
+                if(sleepData.sleep == null){
+                    res.redirect(url + "/user/" + result.user_id);
+                }
+                else{
+                console.log(sleepData[0].sleep)
+                db.upsertUserPullDateNow(result.user_id).then(flag=>{
+                    if(flag){
+                        db.insertUserSleepDatas(result.user_id, sleepData[0].sleep).then(flag2=>{
+                            res.redirect(url + "/user/" + result.user_id);
+                        })
+                    }
+            })
+        }
+            }).catch(err => {
+                 console.log("get sleep data error")
+            });
         }).catch(err => {
-            res.status(err.status).send(err);
+            console.log("get accesstoken error")
         });
-    }).catch(err => {
-        res.status(err.status).send(err);
-    });
+        });
 })
 
 //app.post('user/:id) form 형식으로 날짜정보 받아서 데이터 DB조회
