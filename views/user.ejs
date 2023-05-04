@@ -5,18 +5,19 @@
   </head>
   <body>
     <h1>Fitbit UserPage</h1>
-    <p>나의 수면 현황 </p>
-    <button onclick="data()">나의 수면 현황</button>
-
+    <div>나의 수면 현황</div>
+        <form action='<%= id %>' method="post">
+            <label for="date">날짜 선택:</label>
+            <input type="date" name="startDate" placeholder="시작일">
+            <label for="date">날짜 선택:</label>
+            <input type="date" name="endDate" placeholder="종료일">
+            <input type="submit" value="Submit">
+        </form>
     <p>나의 최적 수면환경 찾기</p>
     <button onclick="sleep()">나의 최적 수면환경</button>
 
-    <script>
-      function data() {
-        // Redirect to the Fitbit authorization page
-        window.location.href = '<%= url %>' + "/user/" +'<%= id %>' + "/data";
-      }
 
+    <script>
       function sleep() {
         // Redirect to the Fitbit authorization page
         window.location.href = '<%= url %>' + "/user/" +'<%= id %>' + "/sleep";

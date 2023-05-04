@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
 const ejs = require('ejs')
-const path = require('path')
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }));
 
 var FitbitApiClient = require("fitbit-node");
 
@@ -41,10 +43,11 @@ app.get('/callback', function (req, res) {
     console.log('connect /callback')
     // exchange the authorization code we just received for an access token
     apiClient.getAccessToken(req.query.code, redirectUrl).then(result => {
-        // use the access token to fetch the user's profile information
-        console.log(result)
+        // callback에서는 DB 업데이트 과정을 처리
+        //selectUserPullDate로 최종 업데이트 날짜 가져오고 현재시간에서 빼고 뺀 시간만큼 apiClientget sleep 데이터를 가져오고 디비에 insert (result.sleep for문)
+        //upsertDate로 날짜 업데이트 해줌 (DB업데이트 끝)
         apiClient.get("/sleep/list.json?afterDate=2020-05-01&sort=asc&offset=0&limit=1", result.access_token).then(results => {
-            //sendData() -> DB로 데이터 보내기
+            // res.send(results[0].sleep)
             res.redirect(url + "/user/" + result.user_id);
         }).catch(err => {
             res.status(err.status).send(err);
@@ -54,8 +57,32 @@ app.get('/callback', function (req, res) {
     });
 })
 
+//app.post('user/:id) form 형식으로 날짜정보 받아서 데이터 DB조회
+app.post('/user/:id', function(req, res){
+    const id = req.params.id
+    //DB에서 데이터 조회에서 data 객체에 담아서 post 전달
+    const dummyData= {
+        url: url,
+        id: id,
+        startDate: req.body.startDate, 
+        endDate: req.body.endDate,
+        sleepScore: 60,
+        env: {temparature:18, humidity:28, illuminance:8}
+    };
+    const data = {
+        //db 데이터 
+    };
+    //post 하면서 data.ejs 화면 렌더링 url은 계속 /user/:id -> 경로 2개로 줘서 sleep도 처리 가능할듯?
+    ejs.renderFile('views/data.ejs',dummyData, function(err,html){
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(html)
+        }
+    });
+});
+
 app.get('/user/:id', function(req, res){
-    //두가지 버튼 1.유저 DATA 조회 2.최적환경 대시보드
     const id = req.params.id
     console.log('connect /user/'+id)
     const data= {
@@ -72,28 +99,30 @@ app.get('/user/:id', function(req, res){
     //getData() 데이터 베이스에서 필요한 데이터 가져오기
 })
 
-app.get('/user/:id/data', function(req, res){
-    const id = req.params.id
-    console.log('connect /user/'+id+'/data')
-    data = {
-        user: '동열',
-        date: '2023-05-02',
-        sleepScore: 70,
-        env: {temparature:20, humidity:50, illuminance:10}
-    }
-    ejs.renderFile('views/data.ejs',data, function(err,html){
-        if (err) {
-            console.log(err)
-        } else {
-            res.send(html)
-        }
-    });
-})
+// app.get('/user/:id/data', function(req, res){
+//     const id = req.params.id
+//     console.log('connect /user/'+id+'/data')
+//     // data = {
+//     //     user: '동열',
+//     //     date: '2023-05-02',
+//     //     sleepScore: 70,
+//     //     env: {temparature:20, humidity:50, illuminance:10}
+//     // }
+//     ejs.renderFile('views/data.ejs', function(err,html){
+//         if (err) {
+//             console.log(err)
+//         } else {
+//             res.send(html)
+//         }
+//     });
+// })
 
 app.get('/user/:id/sleep', function(req, res){
     const id = req.params.id
-    console.log('connect /user/'+id+'/data')
+    console.log('connect /user/'+id+'/sleep')
+    //DB에서 데이타 조회, 가공
     data = {
+        id:id,
         user: '동열',
         bestEnv: {temparature:21, humidity:60, illuminance:5}
     }
