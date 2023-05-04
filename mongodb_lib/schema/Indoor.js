@@ -17,4 +17,4 @@ const Indoor = new Schema({
     }
 })
 
-module.exports = mongoose.model();
+module.exports = mongoose.model('Indoor', Indoor);
