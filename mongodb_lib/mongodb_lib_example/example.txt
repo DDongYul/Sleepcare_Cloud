@@ -1,0 +1,35 @@
+subscribe pi
+
+1. listen data from pi
+2. get data from fitbit server(req, res, oauth 2.0)
+3. store data in S3
+
+
+install mongodb
+ubuntu에 mongod 설치하기 및 오류 났을때
+기본적인 설치 : https://askubuntu.com/questions/842592/apt-get-fails-on-16-04-or-18-04-installing-mongodb
+오류 났을때 : https://askubuntu.com/questions/1403619/mongodb-install-fails-on-ubuntu-22-04-depends-on-libssl1-1-but-it-is-not-insta
+
+
+mongodb 계정 생성 및 authorization모드로 실행하기
+https://sungchuni.tistory.com/9
+mongo실행할때 mongo -u [id] -p [pwd] 127.0.0.1:27017/cloud_iot 로 실행 // mongo -u cloudjs -p cloudjs 127.0.0.1:27017/cloud_iot
+**참조
+루트 계정 : junsub junsub
+그외 rootjs rootjs / cloudjs cloudjs
+
+
+mosquitto configration
+1) mosquitto 설치하고
+2) mosquitto.conf에
+listener 1883 0.0.0.0
+allow_anonymous true
+protocol mqtt
+3) mosquito -c mosquitto.conf (specifiying broker config file)
+4) mosquitto실행
+
+
+background execution(sudo systemctl stop/start mongod/mosquitto)
+
+
+mongodb authentication : 해결해야만 document가 사라지는 문제 해결 가능

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
-const Sleep = new Schema({
+const Indoor = new Schema({
     userObjId : {
         type : Schema.Types.ObjectId,
         ref : 'User',
@@ -11,10 +11,10 @@ const Sleep = new Schema({
         type : Date,
         required : true
     },
-    sleepData : {
-        type : Object,
+    indoorData : {
+        type: Object,
         required : true
     }
-});
+})
 
-module.exports = mongoose.model('Sleep', Sleep);
+module.exports = mongoose.model();

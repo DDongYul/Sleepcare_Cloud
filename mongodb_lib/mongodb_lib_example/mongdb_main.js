@@ -1,5 +1,6 @@
 const accessMongoDB = require('../access_mongodb');
 const testObj = require('./test_obj');
+const localDate = require('../../date_lib/get_local_date');
 
 //select userObjId deprecated
 // async function asyncSelectUserObjId(){
@@ -27,8 +28,24 @@ function selectUpdate(){
 
 //insert sleep data
 async function asyncInsertSleep(){
-    accessMongoDB.insertUserSleepDatas('BB', testObj.oneDaySleepData0429);
+    accessMongoDB.insertUserSleepDataList('BB', testObj.oneDaySleepData0429);
 }
+
+//===============================================
+
+//select sleep data
+function selectSleepData(){
+    var start = localDate.byFormat1('2023-04-29');
+    var end = localDate.byFormat1('2023-05-01');
+    //from 04/29:00:00 ~ 05/01:00:00
+    accessMongoDB.selectUserSleepDataList('BB', start, end).then((sleepDataList) =>{
+        for(sleepData of sleepDataList){
+            console.log(sleepData);
+        }
+    });
+   
+}
+
 
 // asyncSelectUserObjId();
 // asyncSelectUserObjId();
@@ -39,4 +56,6 @@ async function asyncInsertSleep(){
 // asyncInsertSleep();
 
 
-asyncSelectUpdate().then(()=>{asyncInsertSleep();})
+// asyncSelectUpdate().then(()=>{asyncInsertSleep();})
+
+selectSleepData();

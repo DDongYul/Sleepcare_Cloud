@@ -1,6 +1,7 @@
 const conn = require('./connection/connection');
 const User = require('./schema/User');
 const Sleep = require('./schema/Sleep');
+const Indoor = require('./schema/Indoor');
 const LocalDate = require('../date_lib/get_local_date');
 
 async function internalSelectUserObjId (userId){
@@ -114,6 +115,73 @@ const exportingModule = {
             console.log(err);
         }finally{
             await conn.disconnect('inserSleepData');
+        }
+    },
+    /**
+     * 
+     * @param {*} userId 
+     * @param {*} startDate date object
+     * @param {*} endDate date object
+     * @returns success : sleepDataList / fail : null
+     * select startDate ~ endDate sleepDatas
+     */
+    selectUserSleepDataList : async (userId, startDate, endDate) => {
+        await conn.connect('selectSleepData')
+        try{
+            var userObjId = await internalSelectUserObjId(userId);
+            if(userObjId == null){
+                console.log('no such user');
+                return null;
+            }
+            var sleepDataList = await Sleep.find({userObjId : userObjId, date : {$gte : startDate, $lte : endDate}});
+            return sleepDataList;
+        }catch(err){
+
+        }finally{
+            conn.disconnect('selectSleepData')
+        }
+    },
+    insertUserIndoorData : async (userId, indoorData) => {
+        await conn.connect('insertIndoor');
+        try{
+            var userObjId = await internalSelectUserObjId(userId);
+            if(userObjId == null){
+                console.log('no such user');
+                return false;
+            }
+            var date = LocalDate.byFormat2(indoorData.date);
+            var doc = await Indoor.create({
+                userObjId : userObjId,
+                date : date,
+                indoorData : indoorData
+            });
+            if(doc == null){
+                console.log('err by internal insertIndoorData create');
+                return false;
+            }
+            return true;
+        }catch(err){
+            console.log('err at insertIndoor');
+            console.log(err);
+        }finally{
+            conn.disconnect('insertIndoor');
+        }
+    },
+    selectUserIndoorDataList : async (userId, startDate, endDate) => {
+        await conn.connect('selectIndoor');
+        try{
+            var userObjId = await internalSelectUserObjId(userId);
+            if(userObjId == null){
+                console.log('no such user');
+                return null;
+            }
+            var indoorDataList = await Indoor.find({userObjId : userObjId, date : {$gte : startDate, $lte : endDate}});
+            return indoorDataList;
+        }catch(err){
+            console.log('err at selectIndoor');
+            console.log(err);
+        }finally{
+            conn.disconnect('selectIndoor');
         }
     }
 };
