@@ -8,8 +8,9 @@
   <h1>User Data</h1>
   
   <ul>
-    <li>User: <%= user %></li>
-    <li>Date: <%= date %></li>
+    <li>User: <%= id %></li>
+    <li>startDate: <%= startDate %></li>
+    <li>endDate: <%= endDate %></li>
     <li>Sleep Score: <%= sleepScore %></li>
     <li>Environment:</li>
     <ul>
@@ -18,5 +19,13 @@
       <li>Illuminance: <%= env.illuminance %></li>
     </ul>
   </ul>
+
+  <button onclick="back()">뒤로 가기</button>
 </body>
+
+<script>
+      function back() {
+        window.location.href = '<%= url %>' + "/user/" +'<%= id %>';
+      }
+</script>
 </html>

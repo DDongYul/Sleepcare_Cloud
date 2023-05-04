@@ -16,5 +16,11 @@
       <li>Illuminance: <%= bestEnv.illuminance %></li>
     </ul>
   </ul>
+  <button onclick="back()">뒤로 가기</button>
 </body>
+<script>
+  function back() {
+    window.location.href = "/user/" +'<%= id %>';
+  }
+</script>
 </html>
