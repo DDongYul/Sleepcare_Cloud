@@ -43,7 +43,7 @@ const exportingModule = {
     selectUserPullDate : async (userId) => {
         await conn.connect('selectPullDate');
         try{
-            var user = await User.findOne({ user : userId});
+            var user = await User.findOne({ userId : userId});
             if(user == null){
                 console.log('no such user');
                 return null;
@@ -96,7 +96,7 @@ const exportingModule = {
                 return false;
             }
             var sleepDataSchemaList = [];
-            for(const sleepData of sleepDataList.sleep){
+            for(const sleepData of sleepDataList){
                 var date = LocalDate.byFormat2(sleepData.endTime);
                 sleepDataSchemaList.push({userObjId : userObjId, sleepData : sleepData ,date : date});
             }
