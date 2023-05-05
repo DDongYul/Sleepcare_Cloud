@@ -8,16 +8,18 @@
   <h1>User Data</h1>
   
   <ul>
-    <li>User: <%= id %></li>
-    <li>startDate: <%= startDate %></li>
-    <li>endDate: <%= endDate %></li>
-    <li>Sleep Score: <%= sleepScore %></li>
+    <% for (var i=0; i<datas.length; i++){ %>
+    <li>endTime: <%= datas[i].endTime %></li>
+    <li>User: <%= datas[i].id %></li>
+    <li>Sleep Score: <%= datas[i].sleepScore %></li>
     <li>Environment:</li>
     <ul>
-      <li>Temperature: <%= env.temparature %></li>
-      <li>Humidity: <%= env.humidity %></li>
-      <li>Illuminance: <%= env.illuminance %></li>
+      <li>Temperature: <%= datas[i].env.temparature %></li>
+      <li>Humidity: <%= datas[i].env.humidity %></li>
+      <li>Illuminance: <%= datas[i].env.illuminance %></li>
     </ul>
+    <br><br>
+    <% } %>
   </ul>
 
   <button onclick="back()">뒤로 가기</button>
@@ -25,7 +27,7 @@
 
 <script>
       function back() {
-        window.location.href = '<%= url %>' + "/user/" +'<%= id %>';
+        window.location.href = '<%= datas[0].url %>' + "/user/" +'<%= datas[0].id %>';
       }
 </script>
 </html>

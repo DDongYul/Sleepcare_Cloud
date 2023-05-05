@@ -40,22 +40,9 @@ app.get('/authorize', function (req, res) {
     res.redirect(apiClient.getAuthorizeUrl(scope, redirectUrl));
 })
 
-function dateFormat(date) {
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let hour = date.getHours();
-
-    month = month >= 10 ? month : '0' + month;
-    day = day >= 10 ? day : '0' + day;
-    hour = hour >= 10 ? hour : '0' + hour;
-
-    return date.getFullYear() + '-' + month + '-' + day;
-}
-
 app.get('/callback', function (req, res) {
     console.log('connect /callback')
     // exchange the authorization code we just received for an access token
-    console.log(req);
     apiClient.getAccessToken(req.query.code, redirectUrl).then(result => {
         var beforeDate = dateFormat(LocalDate.now())
         console.log("beforeDate:",beforeDate)
@@ -64,21 +51,24 @@ app.get('/callback', function (req, res) {
             if (lastModified == null){
                 var sleepQuery = "/sleep/list.json?beforeDate=" + beforeDate + "&sort=asc&offset=0&limit=10"
             }
+            //dateFormat(lastmodified)와 beforeDate 같으면 굳이 조회 안하는 방향으로 refactoring 하는게 나을듯
             else{
+                // res.redirect(url + "/user/" + result.user_id);
                 var sleepQuery = "/sleep/list.json?afterDate=" + dateFormat(lastModified) + "beforeDate=" + beforeDate + "&sort=asc&offset=0&limit=10"
             }
             console.log("sleepQuery:",sleepQuery)
 
             apiClient.get(sleepQuery, result.access_token).then(sleepData => {
+                console.log("sleedata",sleepData[0])
                 // DB에 데이터 저장
-                if(sleepData.sleep == null){
+                if(sleepData[0].sleep == null){
                     res.redirect(url + "/user/" + result.user_id);
                 }
                 else{
                 console.log(sleepData[0].sleep)
                 db.upsertUserPullDateNow(result.user_id).then(flag=>{
                     if(flag){
-                        db.insertUserSleepDatas(result.user_id, sleepData[0].sleep).then(flag2=>{
+                        db.insertUserSleepDataList(result.user_id, sleepData[0].sleep).then(flag2=>{
                             res.redirect(url + "/user/" + result.user_id);
                         })
                     }
@@ -96,26 +86,32 @@ app.get('/callback', function (req, res) {
 //app.post('user/:id) form 형식으로 날짜정보 받아서 데이터 DB조회
 app.post('/user/:id', function(req, res){
     const id = req.params.id
-    //DB에서 데이터 조회에서 data 객체에 담아서 post 전달
-    const dummyData= {
-        url: url,
-        id: id,
-        startDate: req.body.startDate, 
-        endDate: req.body.endDate,
-        sleepScore: 60,
-        env: {temparature:18, humidity:28, illuminance:8}
-    };
-    const data = {
-        //db 데이터 
-    };
-    //post 하면서 data.ejs 화면 렌더링 url은 계속 /user/:id -> 경로 2개로 줘서 sleep도 처리 가능할듯?
-    ejs.renderFile('views/data.ejs',dummyData, function(err,html){
-        if (err) {
-            console.log(err)
-        } else {
-            res.send(html)
-        }
-    });
+    // DB에서 데이터 조회에서 data 객체에 담아서 post 전달
+    db.selectUserSleepDataList(id,req.body.startDate,req.body.endDate).then(sleepDataList =>{
+        db.selectUserIndoorDataList(id,req.body.startDate,req.body.endDate).then(indoorDataList=>{
+            console.log(sleepDataList.length)
+            const datas=[]
+            for(let i =0;i<sleepDataList.length; i++){
+                var s = sleepDataList[i].sleepData;
+                const data = {
+                    url: url,
+                    id: id,
+                    dateOfSleep: s.dateOfSleep,
+                    sleepScore: s.efficiency,
+                    endTime: s.endTime,
+                    env: {temparature:18, humidity:28, illuminance:8}
+                }
+                datas[i] = data
+            }
+            ejs.renderFile('views/data.ejs',{datas:datas}, function(err,html){
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.send(html)
+                }
+            });
+        })
+    })
 });
 
 app.get('/user/:id', function(req, res){
@@ -132,26 +128,7 @@ app.get('/user/:id', function(req, res){
         res.send(html)
     }
 });
-    //getData() 데이터 베이스에서 필요한 데이터 가져오기
 })
-
-// app.get('/user/:id/data', function(req, res){
-//     const id = req.params.id
-//     console.log('connect /user/'+id+'/data')
-//     // data = {
-//     //     user: '동열',
-//     //     date: '2023-05-02',
-//     //     sleepScore: 70,
-//     //     env: {temparature:20, humidity:50, illuminance:10}
-//     // }
-//     ejs.renderFile('views/data.ejs', function(err,html){
-//         if (err) {
-//             console.log(err)
-//         } else {
-//             res.send(html)
-//         }
-//     });
-// })
 
 app.get('/user/:id/sleep', function(req, res){
     const id = req.params.id
@@ -174,3 +151,16 @@ app.get('/user/:id/sleep', function(req, res){
 app.listen(3000, function () {
     console.log('3000 port listen !!')
 })
+
+//date -> YY-MM-DD
+function dateFormat(date) {
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hour = date.getHours();
+
+    month = month >= 10 ? month : '0' + month;
+    day = day >= 10 ? day : '0' + day;
+    hour = hour >= 10 ? hour : '0' + hour;
+
+    return date.getFullYear() + '-' + month + '-' + day;
+}
