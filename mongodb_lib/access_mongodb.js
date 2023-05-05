@@ -71,12 +71,13 @@ const exportingModule = {
         try{
             var now = LocalDate.now();
             var doc = await User.findOneAndUpdate({userId : userId}, {userId : userId, pullDate : now}, {upsert : true});
-            if(doc == null){
-                console.log('function err at Mongoose findOneAndUpdate')
-                return false;
-            }else{
-                return true;
-            }
+            // if(doc == null){
+            //     console.log('function err at Mongoose findOneAndUpdate')
+            //     return false;
+            // }else{
+            //     return true;
+            // }
+            return true
         }catch(err){
             console.log('err at updateUserLastDateNow');
             console.log(err);
