@@ -89,10 +89,13 @@ app.post('/user/:id', function(req, res){
     // DB에서 데이터 조회에서 data 객체에 담아서 post 전달
     db.selectUserSleepDataList(id,req.body.startDate,req.body.endDate).then(sleepDataList =>{
         db.selectUserIndoorDataList(id,req.body.startDate,req.body.endDate).then(indoorDataList=>{
-            console.log(sleepDataList.length)
             const datas=[]
             for(let i =0;i<sleepDataList.length; i++){
                 var s = sleepDataList[i].sleepData;
+                console.log(s)
+                console.log(s.levels.summary)
+                // console.log(s.levels.data)
+                console.log(s.levels.shortData)
                 const data = {
                     url: url,
                     id: id,
