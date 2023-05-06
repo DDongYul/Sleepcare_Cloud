@@ -1,0 +1,74 @@
+## sleep data 뭐 있는지, 어떻게 활용하면 좋을지
+
+#sleepDataList.sleepData(s)
+{
+  dateOfSleep: '2023-05-03',
+  duration: 29640000,
+  efficiency: 86,
+  endTime: '2023-05-03T10:21:30.000',
+  infoCode: 0,
+  isMainSleep: true,
+  levels: {
+    data: [
+      [Object], [Object], [Object],
+      .....
+    ],
+    shortData: [
+      [Object], [Object], [Object],
+      ...
+    ],
+    summary: { deep: [Object], light: [Object], rem: [Object], wake: [Object] }
+  },
+  logId: 41183695071,
+  logType: 'auto_detected',
+  minutesAfterWakeup: 0,
+  minutesAsleep: 413,
+  minutesAwake: 81,
+  minutesToFallAsleep: 0,
+  startTime: '2023-05-03T02:07:00.000',
+  timeInBed: 494,
+  type: 'stages'
+}
+
+#s.levels.summary
+{
+  deep: { count: 6, minutes: 62, thirtyDayAvgMinutes: 73 },
+  light: { count: 37, minutes: 274, thirtyDayAvgMinutes: 235 },
+  rem: { count: 10, minutes: 77, thirtyDayAvgMinutes: 57 },
+  wake: { count: 39, minutes: 81, thirtyDayAvgMinutes: 80 }
+}
+
+#s.levels.shortData -> level 오직 wake만 있음
+[
+  { dateTime: '2023-05-03T02:07:00.000', level: 'wake', seconds: 60 },
+  { dateTime: '2023-05-03T02:12:30.000', level: 'wake', seconds: 120 },
+  { dateTime: '2023-05-03T02:24:30.000', level: 'wake', seconds: 90 },
+  { dateTime: '2023-05-03T03:02:00.000', level: 'wake', seconds: 60 },
+  { dateTime: '2023-05-03T03:06:30.000', level: 'wake', seconds: 30 },
+  { dateTime: '2023-05-03T03:27:30.000', level: 'wake', seconds: 120 },
+  { dateTime: '2023-05-03T03:36:00.000', level: 'wake', seconds: 30 },
+  { dateTime: '2023-05-03T03:41:00.000', level: 'wake', seconds: 30 },
+  ...
+]
+
+#s.levels.data -> level이 wake light rem deep 
+[
+  { dateTime: '2023-05-03T02:07:00.000', level: 'wake', seconds: 60 },
+  { dateTime: '2023-05-03T02:34:30.000', level: 'deep', seconds: 330 },
+  { dateTime: '2023-05-03T02:40:00.000', level: 'light', seconds: 120 },
+  { dateTime: '2023-05-03T02:42:00.000', level: 'wake', seconds: 480 },
+  { dateTime: '2023-05-03T02:50:00.000', level: 'light', seconds: 1320 },
+  { dateTime: '2023-05-03T03:12:00.000', level: 'wake', seconds: 750 },
+  { dateTime: '2023-05-03T03:45:30.000', level: 'wake', seconds: 300 },
+  { dateTime: '2023-05-03T03:50:30.000', level: 'light', seconds: 750 },
+  { dateTime: '2023-05-03T04:03:00.000', level: 'deep', seconds: 570 },
+  { dateTime: '2023-05-03T04:12:30.000', level: 'light', seconds: 120 },
+  { dateTime: '2023-05-03T04:14:30.000', level: 'wake', seconds: 210 },
+  { dateTime: '2023-05-03T04:47:30.000', level: 'wake', seconds: 570 },
+  { dateTime: '2023-05-03T04:57:00.000', level: 'light', seconds: 300 },
+  { dateTime: '2023-05-03T05:02:00.000', level: 'rem', seconds: 930 },
+  { dateTime: '2023-05-03T05:17:30.000', level: 'light', seconds: 690 },
+  { dateTime: '2023-05-03T05:29:00.000', level: 'deep', seconds: 1530 },
+  { dateTime: '2023-05-03T06:43:30.000', level: 'rem', seconds: 2100 },
+  { dateTime: '2023-05-03T07:36:30.000', level: 'deep', seconds: 750 }
+]
