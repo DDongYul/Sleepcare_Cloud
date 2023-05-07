@@ -72,3 +72,31 @@
   { dateTime: '2023-05-03T06:43:30.000', level: 'rem', seconds: 2100 },
   { dateTime: '2023-05-03T07:36:30.000', level: 'deep', seconds: 750 }
 ]
+
+
+####indoor Data Format###########
+[
+  {
+    _id: new ObjectId("64572fbd011f288f351ec553"),
+    userObjId: new ObjectId("645480caf1485abc41d867d1"),
+    date: 2023-05-04T04:00:00.000Z,
+    indoorData: {
+      datetime: '2023-05-04T04:00:00.000Z',
+      temperature: 19,
+      humidity: 21,
+      illuminance: 51
+    },
+    __v: 0
+  },
+  {
+    _id: new ObjectId("64572fcdf84b4d446cf959ae"),
+    userObjId: new ObjectId("645480caf1485abc41d867d1"),
+    date: 2023-05-05T04:00:00.000Z,
+    indoorData: {
+      datetime: '2023-05-05T04:00:00.000Z',
+      temperature: 20,
+      humidity: 20,
+      illuminance: 69
+    },
+    __v: 0
+  },

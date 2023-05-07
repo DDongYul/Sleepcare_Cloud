@@ -54,18 +54,18 @@ app.get('/callback', function (req, res) {
             //dateFormat(lastmodified)와 beforeDate 같으면 굳이 조회 안하는 방향으로 refactoring 하는게 나을듯
             else{
                 // res.redirect(url + "/user/" + result.user_id);
-                var sleepQuery = "/sleep/list.json?afterDate=" + dateFormat(lastModified) + "beforeDate=" + beforeDate + "&sort=asc&offset=0&limit=10"
+                var sleepQuery = "/sleep/date/" + dateFormat(lastModified) + "/" + beforeDate + ".json" + "?sort=asc&offset=0&limit=10"
             }
             console.log("sleepQuery:",sleepQuery)
 
             apiClient.get(sleepQuery, result.access_token).then(sleepData => {
-                console.log("sleedata",sleepData[0])
+                // console.log("sleedata",sleepData[0])
                 // DB에 데이터 저장
                 if(sleepData[0].sleep == null){
                     res.redirect(url + "/user/" + result.user_id);
                 }
                 else{
-                console.log(sleepData[0].sleep)
+                // console.log(sleepData[0].sleep)
                 db.upsertUserPullDateNow(result.user_id).then(flag=>{
                     if(flag){
                         db.insertUserSleepDataList(result.user_id, sleepData[0].sleep).then(flag2=>{
@@ -90,22 +90,30 @@ app.post('/user/:id', function(req, res){
     db.selectUserSleepDataList(id,req.body.startDate,req.body.endDate).then(sleepDataList =>{
         db.selectUserIndoorDataList(id,req.body.startDate,req.body.endDate).then(indoorDataList=>{
             const datas=[]
+            console.log(indoorDataList)
             for(let i =0;i<sleepDataList.length; i++){
                 var s = sleepDataList[i].sleepData;
-                console.log(s)
-                console.log(s.levels.summary)
-                // console.log(s.levels.data)
-                console.log(s.levels.shortData)
-                const data = {
-                    url: url,
-                    id: id,
-                    dateOfSleep: s.dateOfSleep,
-                    sleepScore: s.efficiency,
-                    endTime: s.endTime,
-                    env: {temparature:18, humidity:28, illuminance:8}
+                for(let j = 0; j<indoorDataList.length; j++){
+                    var e = indoorDataList[j].indoorData
+                    if (s.dateOfSleep==dateFormat(new Date(e.datetime))){
+                        const data = {
+                            url: url,
+                            id: id,
+                            dateOfSleep: s.dateOfSleep,
+                            sleepScore: s.efficiency,
+                            endTime: s.endTime,
+                            env: {temparature:e.temperature, humidity:e.humidity, illuminance:e.illuminance}
+                        }
+                        datas[i] = data
+                        break
+                    }
                 }
-                datas[i] = data
+                // console.log(s)
+                // console.log(s.levels.summary)
+                // console.log(s.levels.data)
+                // console.log(s.levels.shortData)
             }
+            datas.sort((a,b)=> a.dateOfSleep-b.dateOfSleep)
             ejs.renderFile('views/data.ejs',{datas:datas}, function(err,html){
                 if (err) {
                     console.log(err)
@@ -136,26 +144,30 @@ app.get('/user/:id', function(req, res){
 app.get('/user/:id/sleep', function(req, res){
     const id = req.params.id
     console.log('connect /user/'+id+'/sleep')
-    //DB에서 데이타 조회, 가공
-    data = {
-        id:id,
-        user: '동열',
-        bestEnv: {temparature:21, humidity:60, illuminance:5}
-    }
-    ejs.renderFile('views/sleep.ejs',data, function(err,html){
-        if (err) {
-            console.log(err)
-        } else {
-            res.send(html)
-        }
-    });
+    /**
+     * 1.sleepData와 indoorData를 모두 가져와서 날짜에 맞게 합침 
+     * 2.efiicency 순으로 정렬해서 상위 5개 뽑음
+     * 3.5개의 indoor 데이터 평균내서 렌더링
+     */
+    db.selectUserSleepDataList(id,req.body.startDate,req.body.endDate).then(sleepDataList =>{
+        db.selectUserIndoorDataList(id,req.body.startDate,req.body.endDate).then(indoorDataList=>{
+            //알고리즘 설계
+            ejs.renderFile('views/sleep.ejs',datas, function(err,html){
+                if (err) {
+                    console.log(err)
+                } else {
+                    res.send(html)
+                }
+            });
+    })
+})
 })
 
 app.listen(3000, function () {
     console.log('3000 port listen !!')
 })
 
-//date -> YY-MM-DD
+//date -> YY-MM-DD(String)
 function dateFormat(date) {
     let month = date.getMonth() + 1;
     let day = date.getDate();
