@@ -33,3 +33,9 @@ background execution(sudo systemctl stop/start mongod/mosquitto)
 
 
 mongodb authentication : 해결해야만 document가 사라지는 문제 해결 가능
+
+
+indoor
+{"datetime":"2023-05-04T08:02:20.101Z","temperature":20,"humidity":18,"illuminance":51}
+
+db.indoors.insert({"userObjId" : })

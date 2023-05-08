@@ -19,9 +19,9 @@ async function asyncSelectUpdate(){
 }
 //or
 function selectUpdate(){
-    accessMongoDB.selectUserPullDate('BB').then((userLastDate)=>{
+    accessMongoDB.selectUserPullDate('BJRVPH').then((userLastDate)=>{
         console.log(userLastDate);
-        accessMongoDB.upsertUserPullDateNow('BB');
+        // accessMongoDB.upsertUserPullDateNow('BB');
     })
 }
 //=====================================================
@@ -46,6 +46,32 @@ function selectSleepData(){
    
 }
 
+//=============================================
+
+//insert indoor
+function insertIndoor(){
+    var indoor = {"datetime":"2023-05-07T04:00:00.000Z","temperature":19,"humidity":20,"illuminance":15};
+    var userId = 'BJRVPH'
+    accessMongoDB.insertUserIndoorData(userId, indoor);
+}
+
+//========================================
+function selectIndoor(){
+    var userId= 'BJRVPH'
+    accessMongoDB.selectUserIndoorDataList(userId, localDate.byFormat1('2023-04-01'), localDate.byFormat1('2024-05-05')).then((data)=>{
+        console.log(data);
+    })
+}
+
+//=============================================
+//selectMaxEfficiency
+function selectMax(){
+    var userId = 'BJRVPH';
+    accessMongoDB.selectMaxEfficiencySleepData(userId).then((data) => {
+        console.log(data);
+    });
+}
+
 
 // asyncSelectUserObjId();
 // asyncSelectUserObjId();
@@ -58,4 +84,8 @@ function selectSleepData(){
 
 // asyncSelectUpdate().then(()=>{asyncInsertSleep();})
 
-selectSleepData();
+// selectSleepData();
+
+insertIndoor();
+// selectMax();
+// selectIndoor();
