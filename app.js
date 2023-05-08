@@ -90,6 +90,7 @@ app.post('/user/:id', function(req, res){
     db.selectUserSleepDataList(id,req.body.startDate,req.body.endDate).then(sleepDataList =>{
         db.selectUserIndoorDataList(id,req.body.startDate,req.body.endDate).then(indoorDataList=>{
             const datas=[]
+            console.log(sleepDataList)
             console.log(indoorDataList)
             for(let i =0;i<sleepDataList.length; i++){
                 var s = sleepDataList[i].sleepData;
@@ -108,6 +109,7 @@ app.post('/user/:id', function(req, res){
                         break
                     }
                 }
+            console.log(datas)
                 // console.log(s)
                 // console.log(s.levels.summary)
                 // console.log(s.levels.data)
@@ -146,13 +148,27 @@ app.get('/user/:id/sleep', function(req, res){
     console.log('connect /user/'+id+'/sleep')
     /**
      * 1.sleepData와 indoorData를 모두 가져와서 날짜에 맞게 합침 
-     * 2.efiicency 순으로 정렬해서 상위 5개 뽑음
+     * 2.efficency 순으로 정렬해서 상위 5개 뽑음
      * 3.5개의 indoor 데이터 평균내서 렌더링
      */
-    db.selectUserSleepDataList(id,req.body.startDate,req.body.endDate).then(sleepDataList =>{
-        db.selectUserIndoorDataList(id,req.body.startDate,req.body.endDate).then(indoorDataList=>{
-            //알고리즘 설계
-            ejs.renderFile('views/sleep.ejs',datas, function(err,html){
+    db.selectMaxEfficiencySleepData(id).then(maxEfficiencySleep =>{
+        db.selectUserIndoorDataList(id,LocalDate.byFormat1("2023-01-01"),LocalDate.now()).then(indoorDataList=>{
+            const datas = []
+            for(let i = 0; i<indoorDataList.length; i++){
+                var e = indoorDataList[i].indoorData
+                if (maxEfficiencySleep.dateOfSleep == dateFormat(new Date(e.datetime))){
+                    const data = {
+                        id:id,
+                        url:url,
+                        temperature:e.temperature,
+                        humidity:e.humidity,
+                        illuminance:e.illuminance  
+                    }
+                    datas[0] = data
+                    break
+                }
+            }
+            ejs.renderFile('views/sleep.ejs', {data:datas[0]}, function(err,html){
                 if (err) {
                     console.log(err)
                 } else {

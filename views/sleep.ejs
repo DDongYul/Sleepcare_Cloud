@@ -8,19 +8,18 @@
   <h1>Best Environment</h1>
   
   <ul>
-    <li>User: <%= user %></li>
     <li>Your Best Environment:</li>
     <ul>
-      <li>Temperature: <%= bestEnv.temparature %></li>
-      <li>Humidity: <%= bestEnv.humidity %></li>
-      <li>Illuminance: <%= bestEnv.illuminance %></li>
+      <li>Best Temperature: <%= data.temperature %></li>
+      <li>Best Humidity: <%= data.humidity %></li>
+      <li>Best Illuminance: <%= data.illuminance %></li>
     </ul>
   </ul>
   <button onclick="back()">뒤로 가기</button>
 </body>
 <script>
   function back() {
-    window.location.href = "/user/" +'<%= id %>';
+    window.location.href = "/user/" +'<%= data.id %>';
   }
 </script>
 </html>
