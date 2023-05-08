@@ -77,7 +77,7 @@ const exportingModule = {
             // }else{
             //     return true;
             // }
-            return true;
+            return true
         }catch(err){
             console.log('err at updateUserLastDateNow');
             console.log(err);
