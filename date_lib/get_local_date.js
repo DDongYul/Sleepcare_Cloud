@@ -24,5 +24,15 @@ module.exports={
         var date = new Date(dateFormatString);
         date.setUTCHours(date.getUTCHours() + SeoulTimeOffset);
         return date;
+    },
+    /**
+     * 
+     * @param {*} dateFormatString 2023-04-29T11:01:30.000Z
+     * @returns dateObj with value 2023-04-29T11:01:30.000Z
+     */
+    byFormat3: (dateFormatString) => {
+        var date = new Date(dateFormatString);
+        return date;
     }
+
 }

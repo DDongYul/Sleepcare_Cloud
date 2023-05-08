@@ -71,12 +71,13 @@ const exportingModule = {
         try{
             var now = LocalDate.now();
             var doc = await User.findOneAndUpdate({userId : userId}, {userId : userId, pullDate : now}, {upsert : true});
-            if(doc == null){
-                console.log('function err at Mongoose findOneAndUpdate')
-                return false;
-            }else{
-                return true;
-            }
+            // if(doc == null){
+            //     console.log('function err at Mongoose findOneAndUpdate')
+            //     return false;
+            // }else{
+            //     return true;
+            // }
+            return true;
         }catch(err){
             console.log('err at updateUserLastDateNow');
             console.log(err);
@@ -136,11 +137,35 @@ const exportingModule = {
             var sleepDataList = await Sleep.find({userObjId : userObjId, date : {$gte : startDate, $lte : endDate}});
             return sleepDataList;
         }catch(err){
-
+            console.log('selectSeepData err');
+            console.log(err);
         }finally{
             conn.disconnect('selectSleepData')
         }
     },
+    /**
+     * 
+     * @param {*} userId 
+     * @returns sucess : return maxEfficiency SleepData / fail : null
+     */
+    selectMaxEfficiencySleepData : async (userId) => {
+        await conn.connect('selectMaxEfficiency')
+        try{
+            var userObjId = await internalSelectUserObjId(userId)
+            if(userObjId == null){
+                console.log('no such user');
+                return null;
+            }
+            var maxEfficiencyDoc = await Sleep.findOne({userObjId : userObjId}).sort('-sleepData.Efficiency');
+            return maxEfficiencyDoc.sleepData;
+        }catch(err){
+            console.log('selectMaxEfficiency err');
+            console.log(err);
+        }finally{
+            conn.disconnect('selectMaxEfficiency')
+        }
+    }
+    ,
     insertUserIndoorData : async (userId, indoorData) => {
         await conn.connect('insertIndoor');
         try{
@@ -149,7 +174,7 @@ const exportingModule = {
                 console.log('no such user');
                 return false;
             }
-            var date = LocalDate.byFormat2(indoorData.date);
+            var date = LocalDate.byFormat3(indoorData.datetime);
             var doc = await Indoor.create({
                 userObjId : userObjId,
                 date : date,
@@ -167,6 +192,13 @@ const exportingModule = {
             conn.disconnect('insertIndoor');
         }
     },
+    /**
+     * 
+     * @param {*} userId 
+     * @param {*} startDate date object
+     * @param {*} endDate date object
+     * @returns fail : null / success : indoorDataList
+     */
     selectUserIndoorDataList : async (userId, startDate, endDate) => {
         await conn.connect('selectIndoor');
         try{
