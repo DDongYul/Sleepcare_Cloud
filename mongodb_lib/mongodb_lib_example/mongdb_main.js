@@ -50,7 +50,7 @@ function selectSleepData(){
 
 //insert indoor
 function insertIndoor(){
-    var indoor = {"datetime":"2023-05-07T04:00:00.000Z","temperature":19,"humidity":20,"illuminance":15};
+    var indoor = {"datetime":"2023-04-29T04:00:00.000Z","temperature":22,"humidity":17,"illuminance":15};
     var userId = 'BJRVPH'
     accessMongoDB.insertUserIndoorData(userId, indoor);
 }
@@ -65,7 +65,7 @@ function selectIndoor(){
 
 //=============================================
 //selectMaxEfficiency
-function selectMax(){
+function selectMaxEff(){
     var userId = 'BJRVPH';
     accessMongoDB.selectMaxEfficiencySleepData(userId).then((data) => {
         console.log(data);
@@ -86,6 +86,6 @@ function selectMax(){
 
 // selectSleepData();
 
-insertIndoor();
-// selectMax();
+// insertIndoor();
+selectMaxEff();
 // selectIndoor();
