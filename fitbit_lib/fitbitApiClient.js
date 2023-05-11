@@ -1,9 +1,3 @@
-// =====================================at EC2
-/* 
-const https = require('https'); 
-const fs = require('fs');
-*/
-
 //===================================================================== at EC2
 /* 
 var apiClient = new FitbitApiClient({
