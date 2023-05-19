@@ -2,20 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Best Environment</title>
+  <title><%= data.id %> 님의 가장 좋은 수면환경</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+css
+Copy code
+h1 {
+  color: #333;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color:#fafafd;
+  border:  1px solid black;
+  color: rgba(121, 119, 119, 0.87);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color:#fafafd;
+  border:  1px solid black;
+  color: black;
+}
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic);
+blockquote{
+  font-size: 1.4em;
+  width:40%;
+  margin:50px auto;
+  font-family:Open Sans;
+  font-style:italic;
+  padding:1.2em 30px 1.2em 75px;
+  border-left:8px solid#72a7d6 ;
+  border-right:8px solid#72a7d6 ;
+  line-height:1.6;
+  position: relative;
+  background: #f4f6f8;
+}
+
+blockquote span{
+  display:block;
+  color:#333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top:1em;
+}
+  </style>
+
 </head>
 <body>
-  <h1>Best Environment</h1>
-  
-  <ul>
-    <li>Your Best Environment:</li>
-    <ul>
-      <li>Best Temperature: <%= data.temperature %></li>
-      <li>Best Humidity: <%= data.humidity %></li>
-      <li>Best Illuminance: <%= data.illuminance %></li>
-    </ul>
-  </ul>
-  <button onclick="back()">뒤로 가기</button>
+  <h1><%= data.id %> 님의 최적 수면 환경</h1>
+
+  <blockquote>
+    <span style="font-size: 22px;">Best Temperature: <%= data.temperature %></span>
+    <span style="font-size: 22px;">Best Humidity: <%= data.humidity %></span>
+    <span style="font-size: 22px;">Best Illuminance: <%= data.illuminance %></span>
+  </blockquote>
+  <button onclick="back()">홈으로</button>
 </body>
 <script>
   function back() {

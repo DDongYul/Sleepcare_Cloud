@@ -1,27 +1,176 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Fitbit MainPage</title>
-  </head>
-  <body>
-    <h1>Fitbit UserPage</h1>
-    <div>나의 수면 현황</div>
-        <form action='<%= id %>' method="post">
-            <label for="date">날짜 선택:</label>
-            <input type="date" name="startDate" placeholder="시작일">
-            <label for="date">날짜 선택:</label>
-            <input type="date" name="endDate" placeholder="종료일">
-            <input type="submit" value="Submit">
-        </form>
-    <p>나의 최적 수면환경 찾기</p>
-    <button onclick="sleep()">나의 최적 수면환경</button>
+<head>
+  <meta charset="UTF-8">
+  <title>Fitbit MainPage</title>
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
+    h1 {
+      color: #333;
+    }
 
-    <script>
-      function sleep() {
-        // Redirect to the Fitbit authorization page
-        window.location.href = '<%= url %>' + "/user/" +'<%= id %>' + "/sleep";
-      }
-    </script>
-  </body>
+    div {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    label {
+      margin-right: 5px;
+    }
+
+    input[type="date"] {
+      padding: 5px;
+      margin-right: 5px;
+    }
+
+    input[type="submit"] {
+      padding: 5px 10px;
+      background-color:#fafafd;
+      border:  1px solid black;
+      color: rgba(121, 119, 119, 0.87);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color:#fafafd;
+      border:  1px solid black;
+      color: black;
+    }
+
+    p {
+      margin-top: 20px;
+    }
+
+    button {
+  margin: 20px;
+}
+.custom-btn {
+  width: 200px;
+  height: 60px;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-family: 'Lato', sans-serif;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+   box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+   7px 7px 20px 0px rgba(0,0,0,.1),
+   4px 4px 5px 0px rgba(0,0,0,.1);
+  outline: none;
+}
+.btn-6 {
+  background: rgb(247,150,192);
+background: radial-gradient(circle, rgba(247,150,192,1) 0%, rgba(118,174,241,1) 100%);
+  line-height: 42px;
+  padding: 0;
+  border: none;
+}
+.btn-6 span {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.btn-6:before,
+.btn-6:after {
+  position: absolute;
+  content: "";
+  height: 0%;
+  width: 1px;
+ box-shadow:
+   -1px -1px 20px 0px rgba(255,255,255,1),
+   -4px -4px 5px 0px rgba(255,255,255,1),
+   7px 7px 20px 0px rgba(0,0,0,.4),
+   4px 4px 5px 0px rgba(0,0,0,.3);
+}
+.btn-6:before {
+  right: 0;
+  top: 0;
+  transition: all 500ms ease;
+}
+.btn-6:after {
+  left: 0;
+  bottom: 0;
+  transition: all 500ms ease;
+}
+.btn-6:hover{
+  background: transparent;
+  color: #76aef1;
+  box-shadow: none;
+}
+.btn-6:hover:before {
+  transition: all 500ms ease;
+  height: 100%;
+}
+.btn-6:hover:after {
+  transition: all 500ms ease;
+  height: 100%;
+}
+.btn-6 span:before,
+.btn-6 span:after {
+  position: absolute;
+  content: "";
+  box-shadow:
+   -1px -1px 20px 0px rgba(255,255,255,1),
+   -4px -4px 5px 0px rgba(255,255,255,1),
+   7px 7px 20px 0px rgba(0,0,0,.4),
+   4px 4px 5px 0px rgba(0,0,0,.3);
+}
+.btn-6 span:before {
+  left: 0;
+  top: 0;
+  width: 0%;
+  height: .5px;
+  transition: all 500ms ease;
+}
+.btn-6 span:after {
+  right: 0;
+  bottom: 0;
+  width: 0%;
+  height: .5px;
+  transition: all 500ms ease;
+}
+.btn-6 span:hover:before {
+  width: 100%;
+}
+.btn-6 span:hover:after {
+  width: 100%;
+}
+  </style>
+
+</head>
+<body>
+  <h1>Fitbit UserPage</h1>
+  <div>나의 수면 현황</div>
+  <form action="<%= id %>" method="post">
+    <label for="startDate">시작일:</label>
+    <input type="date" name="startDate" id="startDate">
+    <label for="endDate">종료일:</label>
+    <input type="date" name="endDate" id="endDate">
+    <input type="submit" value="Submit">
+  </form>
+  <!-- <p>나의 최적 수면환경 찾기</p> -->
+  <br>
+  <button class="custom-btn btn-6" onclick="sleep()">나의 최적 수면환경 보기</button>
+
+  <script>
+    function sleep() {
+      window.location.href = '<%= url %>' + "/user/" + '<%= id %>' + "/sleep";
+    }
+  </script>
+</body>
 </html>
