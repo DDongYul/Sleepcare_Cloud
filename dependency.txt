@@ -5,3 +5,4 @@ npm install express
 npm install fitbit-node
 npm install mongoose
 npm install ejs
+npm i swagger-jsdoc swagger-ui-express --save-dev 

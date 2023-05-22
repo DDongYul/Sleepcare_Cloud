@@ -9,7 +9,10 @@ const app = express();
 const sleepCare = require("./controller/router.js")
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+
+const { swaggerUi, specs } = require("./swagger_lib/swagger")
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
 
 app.get('/', sleepCare);
 app.get('/authorize',sleepCare);
