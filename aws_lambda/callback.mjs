@@ -18,12 +18,20 @@ export const handler = async(event) => {
     console.log('lastModified:', lastModified);
     var sleepQuery = '';
     if(lastModified == null){
-        sleepQuery = "/sleep/list.json?beforeDate=" + beforeDate + "&sort=asc&offset=0&limit=10"
-    }else{
-        sleepQuery = "/sleep/date/" + dateFormat(lastModified) + "/" + beforeDate + ".json" + "?sort=asc&offset=0&limit=10"
+        sleepQuery = "/sleep/list.json?beforeDate=" + beforeDate + "&sort=asc&offset=0&limit=100"
     }
+    else if(dateFormat(lastModified) == dateFormat(LocalDate.now())){
+        sleepQuery = null;
+    }
+    else{
+        var lastModified2 = lastModified.setUTCDay(lastModified.getUTCDay() + 1);
+        sleepQuery = "/sleep/date/" + dateFormat(lastModified2) + "/" + beforeDate + ".json" + "?sort=asc&offset=0&limit=100"
+    }
+    lastModified.setUTCDate(lastModified.getUTCDate() + 1)
+    console.log('lastModified2 = ' + dateFormat(lastModified));
     console.log('sleepQuery : ', sleepQuery);
     var sleepData =  await apiClient.get(sleepQuery, result.access_token);
+    console.log(sleepData)
     var nextUrl = '';
     var response = 'async';
     if(sleepData[0].sleep == null){
